@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_experiment/count_hive.dart';
+import 'package:hive_experiment/count_store.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 final getIt = GetIt.instance;
 
-_registerDependencies() async {}
+_registerDependencies() async {
+  getIt.registerSingletonAsync<CountHive>(() async => await CountHive.init());
+  getIt.registerSingletonWithDependencies<CountStore>(() => CountStore(),
+      dependsOn: [CountHive]);
+}
 
 /// # Reactive persistence with Hive Value Listener
 main() async {
@@ -26,63 +33,21 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  bool _isLoading = true;
-
-  /// Store the reference to the box singleton over here. Subsequent
-  /// [Hive.openBox] will lead to the same singleton, but better to
-  /// do with a reference
-  late Box _hiveBox;
-
-  int count = 0;
-
-  /// A callback that gets called on [Box.put]
-  /// use this to update local reference, preferably within store
-  notifyHiveUpdated() {
-    print('Hive Updated');
-    setState(() {
-      count = _hiveBox.get('count');
-    });
-  }
-
-  /// initialize the box properly, add listener and stuff,
-  /// call the listener once to make sure that at startup, we load UI from
-  /// local database
-  _initHive() async {
-    setState(() {
-      _isLoading = true;
-    });
-    _hiveBox = await Hive.openBox('count');
-    _hiveBox.listenable().addListener(notifyHiveUpdated);
-    notifyHiveUpdated();
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _initHive();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text('$count'),
-      ),
+      body: Observer(builder: (_) {
+        return Center(
+          child: Text('${getIt<CountStore>().count}'),
+        );
+      }),
       floatingActionButton: FloatingActionButton(
         /// cache-able actions should ideally end in a write to the hive db
         onPressed: () {
-          _hiveBox.put('count', count + 1);
+          getIt<CountStore>().increment();
         },
       ),
     );

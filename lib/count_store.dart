@@ -22,4 +22,9 @@ abstract class _CountStoreBase with Store {
     getIt<CountHive>().box.listenable().addListener(_updateCountFromLocal);
     _updateCountFromLocal();
   }
+
+  @action
+  increment() {
+    getIt<CountHive>().count = count + 1;
+  }
 }
