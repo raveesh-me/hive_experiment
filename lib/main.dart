@@ -4,10 +4,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 final getIt = GetIt.instance;
 
+_registerDependencies() async {}
+
 /// # Reactive persistence with Hive Value Listener
 main() async {
   /// Initialize Hive on flutter |  boilerplate
   await Hive.initFlutter();
+  await _registerDependencies();
   await getIt.allReady();
   runApp(const MyApp());
 }
