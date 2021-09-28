@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+final getIt = GetIt.instance;
 
 /// # Reactive persistence with Hive Value Listener
 main() async {
   /// Initialize Hive on flutter |  boilerplate
   await Hive.initFlutter();
+  await getIt.allReady();
   runApp(const MyApp());
 }
 
@@ -28,9 +32,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = true;
-  
-  /// Store the reference to the box singleton over here. Subsequent 
-  /// [Hive.openBox] will lead to the same singleton, but better to 
+
+  /// Store the reference to the box singleton over here. Subsequent
+  /// [Hive.openBox] will lead to the same singleton, but better to
   /// do with a reference
   late Box _hiveBox;
 
@@ -45,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  /// initialize the box properly, add listener and stuff, 
+  /// initialize the box properly, add listener and stuff,
   /// call the listener once to make sure that at startup, we load UI from
   /// local database
   _initHive() async {
