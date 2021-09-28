@@ -5,7 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 main() async {
   /// Initialize Hive on flutter |  boilerplate
   await Hive.initFlutter();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
