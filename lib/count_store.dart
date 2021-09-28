@@ -12,15 +12,15 @@ abstract class _CountStoreBase with Store {
   }
 
   @observable
-  late int count;
+  int count = 0;
 
   _updateCountFromLocal() {
     count = getIt<CountHive>().count;
   }
 
   initialize() {
-    getIt<CountHive>().box.listenable().addListener(_updateCountFromLocal);
     _updateCountFromLocal();
+    getIt<CountHive>().box.listenable().addListener(_updateCountFromLocal);
   }
 
   @action

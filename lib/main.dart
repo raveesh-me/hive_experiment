@@ -9,6 +9,7 @@ final getIt = GetIt.instance;
 
 _registerDependencies() async {
   getIt.registerSingletonAsync<CountHive>(() async => await CountHive.init());
+  await getIt.allReady();
   getIt.registerSingletonWithDependencies<CountStore>(() => CountStore(),
       dependsOn: [CountHive]);
 }
